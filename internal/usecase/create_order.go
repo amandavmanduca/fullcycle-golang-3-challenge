@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/devfullcycle/20-CleanArch/internal/entity"
-	"github.com/devfullcycle/20-CleanArch/pkg/events"
+	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/entity"
+	"github.com/amandavmanduca/fullcycle-golang-3-challenge/pkg/events"
 )
 
 type OrderInputDTO struct {
@@ -24,7 +24,7 @@ type CreateOrderUseCase struct {
 	EventDispatcher events.EventDispatcherInterface
 }
 
-func NewCreateOrderUseCase(
+func newCreateOrderUseCase(
 	OrderRepository entity.OrderRepositoryInterface,
 	OrderCreated events.EventInterface,
 	EventDispatcher events.EventDispatcherInterface,

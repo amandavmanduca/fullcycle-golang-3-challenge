@@ -3,18 +3,18 @@ package service
 import (
 	"context"
 
-	"github.com/devfullcycle/20-CleanArch/internal/infra/grpc/pb"
-	"github.com/devfullcycle/20-CleanArch/internal/usecase"
+	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/grpc/pb"
+	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/usecase"
 )
 
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
-	CreateOrderUseCase usecase.CreateOrderUseCase
+	OrderContainer usecase.OrderContainer
 }
 
-func NewOrderService(createOrderUseCase usecase.CreateOrderUseCase) *OrderService {
+func NewOrderService(orderContainer usecase.OrderContainer) *OrderService {
 	return &OrderService{
-		CreateOrderUseCase: createOrderUseCase,
+		OrderContainer: orderContainer,
 	}
 }
 
@@ -24,7 +24,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, in *pb.CreateOrderReques
 		Price: float64(in.Price),
 		Tax:   float64(in.Tax),
 	}
-	output, err := s.CreateOrderUseCase.Execute(dto)
+	output, err := s.OrderContainer.CreateOrderUseCase.Execute(dto)
 	if err != nil {
 		return nil, err
 	}
