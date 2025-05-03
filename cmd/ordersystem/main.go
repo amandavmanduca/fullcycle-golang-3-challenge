@@ -13,6 +13,7 @@ import (
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/event/handler"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/database"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/graph"
+
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/grpc/pb"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/grpc/service"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/web"
@@ -72,9 +73,10 @@ func main() {
 	go grpcServer.Serve(lis)
 
 	// graphql server config
-	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		CreateOrderUseCase: *useCaseContainer.CreateOrderUseCase,
-	}}))
+	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
+		Resolvers: &graph.Resolver{
+			OrderContainer: *useCaseContainer,
+		}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 

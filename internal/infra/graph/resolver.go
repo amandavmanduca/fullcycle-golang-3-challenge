@@ -7,5 +7,5 @@ import "github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/usecase"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	CreateOrderUseCase usecase.CreateOrderUseCase
+	OrderContainer usecase.OrderContainer
 }
