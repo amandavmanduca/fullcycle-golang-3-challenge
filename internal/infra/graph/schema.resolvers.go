@@ -36,7 +36,7 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.Order, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := make([]*model.Order, len(orders))
+	res := make([]*model.Order, 0, len(orders))
 	for _, order := range orders {
 		res = append(res, &model.Order{
 			ID:         order.ID,
