@@ -32,5 +32,3 @@ gen-proto:
 
 evans:
 	go install github.com/ktr0731/evans@latest && evans -r repl
-
-# go install github.com/ktr0731/evans@latest
