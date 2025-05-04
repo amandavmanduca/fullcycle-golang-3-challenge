@@ -32,7 +32,7 @@ check:
 
 
 run: check
-	cd cmd/ordersystem && go run main.go
+	go run cmd/ordersystem/main.go
 
 gen-graphql:
 	go run github.com/99designs/gqlgen generate
