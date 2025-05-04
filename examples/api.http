@@ -1,0 +1,16 @@
+
+
+#### REST: create order
+POST http://localhost:8000/order HTTP/1.1
+content-type: application/json
+
+{
+    "id": "rest",
+    "tax": 0.3,
+    "price": 10.1
+}
+
+### REST: list orders
+GET http://localhost:8000/orders HTTP/1.1
+content-type: application/json
+
