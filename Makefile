@@ -3,21 +3,22 @@ include .env
 setup:
 	docker compose up -d --build
 	$(MAKE) check-mysql
+	@sleep 5  # Espera 5 segundos adicionais para garantir que o MySQL está pronto
 	@if [ "$(SKIP_MIGRATIONS)" != "true" ]; then \
 		$(MAKE) migrate-up; \
 	fi
 
 check-mysql:
 	@echo "Aguardando MySQL estar pronto na porta $(MYSQL_PORT)..."
-	@until nc -z $(MYSQL_HOST) $(MYSQL_PORT) && echo "MySQL pronto"; do \
-		sleep 2; \
+	@until nc -z $(MYSQL_HOST) $(MYSQL_PORT); do \
 		echo "Esperando MySQL..."; \
+		sleep 2; \
 	done
 	@echo "MySQL está pronto."
 
 check-rabbitmq:
 	@echo "Aguardando RabbitMQ responder na interface de gerenciamento..."
-	@until curl -s -u $(RABBITMQ_USER):$(RABBITMQ_PASS) http://localhost:$(RABBITMQ_MANAGEMENT_PORT)/api/healthchecks/node | grep -q '"status":"ok"'; do \
+	@until curl -s -u $(RABBITMQ_USER):$(RABBITMQ_PASS) http://$(RABBITMQ_HOST):$(RABBITMQ_MANAGEMENT_PORT)/api/healthchecks/node | grep -q '"status":"ok"'; do \
 		sleep 1; \
 	done
 
