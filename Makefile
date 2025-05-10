@@ -1,36 +1,7 @@
 include .env
 
-setup:
-	docker compose up -d --build
-
-check-mysql:
-	@echo "Aguardando MySQL estar pronto na porta $(MYSQL_PORT)..."
-	@until nc -z $(MYSQL_HOST) $(MYSQL_PORT); do \
-		echo "Esperando MySQL..."; \
-		sleep 2; \
-	done
-	@echo "MySQL está pronto."
-
-check-rabbitmq:
-	@echo "Aguardando RabbitMQ responder na interface de gerenciamento..."
-	@until curl -s -u $(RABBITMQ_USER):$(RABBITMQ_PASS) http://$(RABBITMQ_HOST):$(RABBITMQ_MANAGEMENT_PORT)/api/healthchecks/node | grep -q '"status":"ok"'; do \
-		sleep 1; \
-	done
-
-check:
-	@if ! docker compose ps | grep -q 'Up'; then \
-		echo "Containers não estão rodando. Executando setup..."; \
-		$(MAKE) setup; \
-	fi
-	$(MAKE) check-mysql
-	$(MAKE) check-rabbitmq
-
 run:
-	go run cmd/ordersystem/main.go
-
-setup-and-run:
-	$(MAKE) check
-	$(MAKE) run
+	docker compose up -d --build
 
 gen-graphql:
 	go run github.com/99designs/gqlgen generate
@@ -53,5 +24,5 @@ migrate-down:
 	@echo "Executing migrations down"
 	goose --dir internal/infra/database/migrations mysql "$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)" down
 
-setup-down:
+teardown:
 	docker-compose down

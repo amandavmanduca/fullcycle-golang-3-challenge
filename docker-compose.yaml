@@ -1,6 +1,29 @@
 version: '3'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    init: true
+    container_name: app
+    restart: always
+    ports:
+      - "${WEB_SERVER_PORT}:${WEB_SERVER_PORT}"
+      - "${GRPC_SERVER_PORT}:${GRPC_SERVER_PORT}"
+      - "${GRAPHQL_SERVER_PORT}:${GRAPHQL_SERVER_PORT}"
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - ./go.mod:/app/go.mod
+      - ./go.sum:/app/go.sum
+      - ./.air.toml:/app/.air.toml
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   mysql:
     image: mysql:5.7
     container_name: mysql
@@ -11,6 +34,12 @@ services:
       - "${MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
       - .docker/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 2
+      start_period: 0s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -21,3 +50,8 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
