@@ -13,6 +13,7 @@ import (
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/event/handler"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/database"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/graph"
+	"github.com/amandavmanduca/fullcycle-golang-3-challenge/migrations"
 
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/grpc/pb"
 	"github.com/amandavmanduca/fullcycle-golang-3-challenge/internal/infra/grpc/service"
@@ -39,6 +40,15 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
+
+	if !configs.SkipMigrations {
+		fmt.Println("Running migrations...")
+		migrationFolder := "internal/infra/database/migrations"
+		err := migrations.MigrateUp(db, migrationFolder)
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	rabbitMQChannel := getRabbitMQChannel()
 

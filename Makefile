@@ -2,11 +2,6 @@ include .env
 
 setup:
 	docker compose up -d --build
-	$(MAKE) check-mysql
-	@sleep 5  # Espera 5 segundos adicionais para garantir que o MySQL está pronto
-	@if [ "$(SKIP_MIGRATIONS)" != "true" ]; then \
-		$(MAKE) migrate-up; \
-	fi
 
 check-mysql:
 	@echo "Aguardando MySQL estar pronto na porta $(MYSQL_PORT)..."
@@ -30,9 +25,12 @@ check:
 	$(MAKE) check-mysql
 	$(MAKE) check-rabbitmq
 
-
-run: check
+run:
 	go run cmd/ordersystem/main.go
+
+setup-and-run:
+	$(MAKE) check
+	$(MAKE) run
 
 gen-graphql:
 	go run github.com/99designs/gqlgen generate
